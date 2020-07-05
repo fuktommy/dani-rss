@@ -1,0 +1,26 @@
+<?php // -*- coding: utf-8 -*-
+
+// local variables
+$appRoot = __DIR__ . '/..';
+
+// global settings
+setlocale(LC_ALL, 'en_US.UTF-8');
+date_default_timezone_set('Asia/Tokyo');
+ini_set('user_agent', 'https://github.com/fuktommy/dani-rss');
+
+// configration
+return [
+    'site_top' => 'https://dani.fuktommy.com',
+
+    'series_list_url' => 'https://site.nicovideo.jp/danime/all_contents_1201.html',
+    'cache_time' => 300,
+    'feed_size' => 30,
+
+    'db_path' => "{$appRoot}/data/dani.sqlite3",
+    'log_dir' => "{$appRoot}/log",
+
+    'smarty_template_dir' => "{$appRoot}/app/templates",
+    'smarty_plugins_dir' => array("{$appRoot}/app/plugins"),
+    'smarty_compile_dir' => "{$appRoot}/tmp/templates_c",
+    'smarty_cache_dir' => "{$appRoot}/tmp/smarty_cache",
+];
