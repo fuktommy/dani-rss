@@ -6,7 +6,7 @@
   <link rel="alternate" href="{$config.series_list_url}" type="text/html"/>
   <updated>{if $serieses}{$serieses[0]->date|atom_date_format}{else}{$smarty.now|atom_date_format}{/if}</updated>
   <generator>https://github.com/fuktommy/dani-rss</generator>
-  <id>tag:fuktommy.com,2017:dani.rss</id>
+  <id>tag:fuktommy.com,2020:dani.rss</id>
   <icon>{$config.site_top}/favicon.ico</icon>
 {foreach from=$serieses item=seriese}
   <entry>
@@ -15,7 +15,7 @@
     <summary type="text">{$seriese->title}</summary>
     <published>{$seriese->date|atom_date_format}</published>
     <updated>{$seriese->date|atom_date_format}</updated>
-    <id>tag:fuktommy.com,2020:/{$seriese->url}</id>
+    <id>tag:fuktommy.com,2020:dani.rss/{$seriese->url}</id>
   </entry>
 {/foreach}
 </feed>
