@@ -4,7 +4,7 @@
  *
  * This plugin come from Smarty date_format modifier plugin.
  */
-function smarty_modifier_atom_date_format($string)
+function smarty_modifier_atom_date_format($string, $default_date = '')
 {
     if (!is_callable('smarty_make_timestamp')) {
         require_once(SMARTY_PLUGINS_DIR . 'shared.make_timestamp.php');

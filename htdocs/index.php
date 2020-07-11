@@ -28,55 +28,19 @@ namespace Fuktommy\DaniRss;
 
 require_once __DIR__ . '/../libs/Fuktommy/Bootstrap.php';
 use Fuktommy\Bootstrap;
-use Fuktommy\Db\Cache;
 use Fuktommy\WebIo;
 
 
 class IndexAction implements WebIo\Action
 {
-    /**
-     * @param Fuktommy\WebIo\Context $context
-     */
     public function execute(WebIo\Context $context)
     {
-        $url = $context->config['series_list_url'];
-        $cacheTime = $context->config['cache_time'];
-        $feedSize = $context->config['feed_size'];
-
-        $cache = new Cache($context->getResource());
-        $cache->setUp();
-        $cache->expire();
-        
-        $html = $cache->get($url);
-        if ($html === null) {
-            $html = file_get_contents($url);
-            $cache->set($url, $html, $cacheTime);
-        }
-        $cache->commit();
-
-        $serieses = [];
-        $lines = explode("\n", $html);
-        foreach ($lines as $line) {
-            if (preg_match('/\A<a href="([^"]+)">([^<]+)<\/a>\r*\z/', $line, $matches)) {
-                $serieses[] = new Series([
-                    'url' => htmlspecialchars_decode($matches[1]),
-                    'title' => htmlspecialchars_decode($matches[2]),
-                    'date' => '',
-                ]);
-            }
-        }
-
-        $seriesList = new SeriesList($context->getResource());
-        $seriesList->setUp();
-        $seriesList->append($serieses);
-        $seriesList->commit();
-
-        $recentSerieses = $seriesList->getRecent($feedSize);
+        $fetcher = new Models\WebPageFetcher($context);
+        $recentSerieses = $fetcher->fetch();
 
         $smarty = $context->getSmarty();
         $smarty->assign('config', $context->config);
         $smarty->assign('serieses', $recentSerieses);
-
         $smarty->display('atom.tpl');
     }
 }

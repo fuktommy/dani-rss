@@ -25,7 +25,7 @@
  * SUCH DAMAGE.
  */
 
-namespace Fuktommy\DaniRss;
+namespace Fuktommy\DaniRss\Models;
 
 class Series
 {

@@ -25,7 +25,7 @@
  * SUCH DAMAGE.
  */
 
-namespace Fuktommy\DaniRss;
+namespace Fuktommy\DaniRss\Models;
 use Fuktommy\Db\Migration;
 
 class SeriesList
