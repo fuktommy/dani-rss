@@ -28,14 +28,16 @@ namespace Fuktommy\DaniRss;
 
 require_once __DIR__ . '/../libs/Fuktommy/Bootstrap.php';
 use Fuktommy\Bootstrap;
-use Fuktommy\WebIo;
+use Fuktommy\DaniRss\Model\WebPageFetcher;
+use Fuktommy\WebIo\Action;
+use Fuktommy\WebIo\Context;
 
 
-class IndexAction implements WebIo\Action
+class IndexAction implements Action
 {
-    public function execute(WebIo\Context $context)
+    public function execute(Context $context)
     {
-        $fetcher = new Models\WebPageFetcher($context);
+        $fetcher = new WebPageFetcher($context->getResource());
         $recentSerieses = $fetcher->fetch();
 
         $smarty = $context->getSmarty();

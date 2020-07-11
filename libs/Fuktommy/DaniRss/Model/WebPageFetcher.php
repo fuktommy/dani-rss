@@ -24,34 +24,35 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-namespace Fuktommy\DaniRss\Models;
+namespace Fuktommy\DaniRss\Model;
 
+use Fuktommy\DaniRss\Entity\Series;
 use Fuktommy\Db\Cache;
-use Fuktommy\WebIo\Context;
+use Fuktommy\WebIo\Resource;
 
 
 class WebPageFetcher
 {
-    /** @var Fuktommy\WebIo\Context */
-    private $context;
+    /** @var Fuktommy\WebIo\Resource */
+    private $resource;
 
-    public function __construct(Context $context)
+    public function __construct(Resource $resource)
     {
-        $this->context = $context;
+        $this->resource = $resource;
     }
 
     /**
-     * @return Fuktommy\DaniRss\Models\Series[]
+     * @return Fuktommy\DaniRss\Entity\Series[]
      */
     public function fetch()
     {
-        $url = $this->context->config['series_list_url'];
-        $cacheTime = $this->context->config['cache_time'];
-        $feedSize = $this->context->config['feed_size'];
+        $url = $this->resource->config['series_list_url'];
+        $cacheTime = $this->resource->config['cache_time'];
+        $feedSize = $this->resource->config['feed_size'];
 
-        $log = $this->context->getLog('fetcher');
+        $log = $this->resource->getLog('fetcher');
 
-        $cache = new Cache($this->context->getResource());
+        $cache = new Cache($this->resource);
         $cache->setUp();
         try {
             $cache->expire();
@@ -83,7 +84,7 @@ class WebPageFetcher
             }
         }
 
-        $seriesList = new SeriesList($this->context->getResource());
+        $seriesList = new SeriesList($this->resource);
         $seriesList->setUp();
 
         try {

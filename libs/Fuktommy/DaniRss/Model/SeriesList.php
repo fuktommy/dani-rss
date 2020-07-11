@@ -25,7 +25,8 @@
  * SUCH DAMAGE.
  */
 
-namespace Fuktommy\DaniRss\Models;
+namespace Fuktommy\DaniRss\Model;
+use Fuktommy\DaniRss\Entity\Series;
 use Fuktommy\Db\Migration;
 
 class SeriesList
@@ -68,7 +69,7 @@ class SeriesList
     /**
      * Select recent items.
      * @param int $size
-     * @return array<Fuktommy\DaniRss\Series>
+     * @return Fuktommy\DaniRss\Entity\Series[]
      * @throws PDOException
      */
     public function getRecent($size)
@@ -90,7 +91,7 @@ class SeriesList
 
     /**
      * Append serieses to list.
-     * @param array<Fuktommy\DaniRss\Series> $serieses
+     * @param Fuktommy\DaniRss\Entity\Series[]
      * @throws PDOException
      */
     public function append($serieses)
