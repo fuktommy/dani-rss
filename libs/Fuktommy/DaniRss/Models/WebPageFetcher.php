@@ -63,6 +63,10 @@ class WebPageFetcher
         if ($html === null) {
             $log->info("fetching $url");
             $html = file_get_contents($url);
+            if (empty($html)) {
+                $log->warning('failed to fetch: ' . implode('; ', $http_response_header));
+                $html = '';
+            }
             $cache->set($url, $html, $cacheTime);
         }
         $cache->commit();
