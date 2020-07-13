@@ -46,12 +46,7 @@ class CachingClient
 
         $cache = new Cache($this->resource);
         $cache->setUp();
-        try {
-            $cache->expire();
-        } catch (\Exception $e) {
-            $log->warning("failed to expire cache: {$e->getMessage()}");
-        }
-        
+
         $data = $cache->get($url);
         if ($data === null) {
             $log->info("fetching $url");
@@ -62,6 +57,8 @@ class CachingClient
             }
             $cache->set($url, $data, $cacheTime);
         }
+
+        $cache->expire();
         $cache->commit();
 
         return $data;
