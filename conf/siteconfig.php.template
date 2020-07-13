@@ -20,7 +20,7 @@ return [
     'log_dir' => "{$appRoot}/logs",
 
     'smarty_template_dir' => "{$appRoot}/app/templates",
-    'smarty_plugins_dir' => array("{$appRoot}/app/plugins"),
+    'smarty_plugins_dir' => ["{$appRoot}/app/plugins"],
     'smarty_compile_dir' => "{$appRoot}/tmp/templates_c",
     'smarty_cache_dir' => "{$appRoot}/tmp/smarty_cache",
 ];

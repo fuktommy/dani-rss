@@ -15,7 +15,7 @@
     <summary type="text">{$seriese->title}</summary>
     <published>{$seriese->date|atom_date_format}</published>
     <updated>{$seriese->date|atom_date_format}</updated>
-    <id>tag:fuktommy.com,2020:dani.rss/{$seriese->url}</id>
+    <id>tag:fuktommy.com,2020:dani.rss/{$seriese->atomId}</id>
   </entry>
 {/foreach}
 </feed>

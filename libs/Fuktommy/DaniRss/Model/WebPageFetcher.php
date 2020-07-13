@@ -27,7 +27,7 @@
 namespace Fuktommy\DaniRss\Model;
 
 use Fuktommy\DaniRss\Entity\Series;
-use Fuktommy\Db\Cache;
+use Fuktommy\Http\CachingClient;
 use Fuktommy\WebIo\Resource;
 
 
@@ -44,40 +44,21 @@ class WebPageFetcher
     /**
      * @return Fuktommy\DaniRss\Entity\Series[]
      */
-    public function fetch()
+    public function fetch(): array
     {
         $url = $this->resource->config['series_list_url'];
         $cacheTime = $this->resource->config['cache_time'];
         $feedSize = $this->resource->config['feed_size'];
 
-        $log = $this->resource->getLog('fetcher');
-
-        $cache = new Cache($this->resource);
-        $cache->setUp();
-        try {
-            $cache->expire();
-        } catch (\Exception $e) {
-            $log->warning("failed to expire cache: {$e->getMessage()}");
-        }
-        
-        $html = $cache->get($url);
-        if ($html === null) {
-            $log->info("fetching $url");
-            $html = file_get_contents($url);
-            if (empty($html)) {
-                $log->warning('failed to fetch: ' . implode('; ', $http_response_header));
-                $html = '';
-            }
-            $cache->set($url, $html, $cacheTime);
-        }
-        $cache->commit();
+        $client = new CachingClient($this->resource);
+        $html = $client->fetch($url, $cacheTime);
 
         $serieses = [];
         $lines = explode("\n", $html);
         foreach ($lines as $line) {
             if (preg_match('/\A<a href="([^"]+)">([^<]+)<\/a>\r*\z/', $line, $matches)) {
                 $serieses[] = new Series([
-                    'url' => htmlspecialchars_decode($matches[1]),
+                    'url' => preg_replace('|^http://|', 'https://', htmlspecialchars_decode($matches[1])),
                     'title' => htmlspecialchars_decode($matches[2]),
                     'date' => '',
                 ]);
@@ -86,10 +67,10 @@ class WebPageFetcher
 
         $seriesList = new SeriesList($this->resource);
         $seriesList->setUp();
-
         try {
             $seriesList->append($serieses);
         } catch (\Exception $e) {
+            $log = $this->resource->getLog('fetcher');
             $log->warning("failed to append series: {$e->getMessage()}");
         }
         $seriesList->commit();

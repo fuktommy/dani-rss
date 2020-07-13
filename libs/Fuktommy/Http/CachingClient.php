@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2012,2020 Satoshi Fukutomi <info@fuktommy.com>.
+ * Copyright (c) 2020 Satoshi Fukutomi <info@fuktommy.com>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,36 +24,46 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+namespace Fuktommy\Http;
 
-namespace Fuktommy\DaniRss\Entity;
+use Fuktommy\Db\Cache;
+use Fuktommy\WebIo\Resource;
 
-class Series
+
+class CachingClient
 {
-    /**
-     * @var string
-     */
-    public $url;
+    /** @var Fuktommy\WebIo\Resource */
+    private $resource;
 
-    /**
-     * @var string
-     */
-    public $title;
-
-    /**
-     * @var string
-     */
-    public $date;
-
-    /**
-     * @var string
-     */
-    public $atomId;
-
-    public function __construct(array $record)
+    public function __construct(Resource $resource)
     {
-        $this->url = $record['url'];
-        $this->title = $record['title'];
-        $this->date = $record['date'];
-        $this->atomId = preg_replace('|^https?://|', '', $this->url);
+        $this->resource = $resource;
+    }
+
+    public function fetch(string $url, int $cacheTime): string
+    {
+        $log = $this->resource->getLog('CachingClient');
+
+        $cache = new Cache($this->resource);
+        $cache->setUp();
+        try {
+            $cache->expire();
+        } catch (\Exception $e) {
+            $log->warning("failed to expire cache: {$e->getMessage()}");
+        }
+        
+        $data = $cache->get($url);
+        if ($data === null) {
+            $log->info("fetching $url");
+            $data = file_get_contents($url);
+            if (empty($data)) {
+                $log->warning('failed to fetch: ' . implode('; ', $http_response_header));
+                $data = '';
+            }
+            $cache->set($url, $data, $cacheTime);
+        }
+        $cache->commit();
+
+        return $data;
     }
 }

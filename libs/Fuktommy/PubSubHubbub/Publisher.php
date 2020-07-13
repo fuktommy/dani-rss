@@ -83,7 +83,7 @@ class Publisher
                 false,
                 stream_context_create(array('http' => $httpOptions)));
         } catch (ErrorException $e) {
-            $log->warning("{$e->getMessage()} for publishing {$userId}");
+            $log->warning("{$e->getMessage()} for publishing {$feedUrl}");
         }
     }
 }
