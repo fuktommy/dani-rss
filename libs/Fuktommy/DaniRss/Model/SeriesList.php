@@ -121,7 +121,7 @@ class SeriesList
         $state = $this->db->prepare(
             "UPDATE `series`"
             . " SET `url` = :url"
-            . " WHERE `title` = :title"
+            . " WHERE `title` = :title AND `url` <> :url"
         );
         foreach ($serieses as $seriese) {
             $state->execute([
