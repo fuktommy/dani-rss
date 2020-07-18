@@ -14,7 +14,7 @@ return [
 
     'series_list_url' => 'https://site.nicovideo.jp/danime/all_contents_1201.html',
     'cache_time' => 300,
-    'feed_size' => 50,
+    'feed_size' => 60,
 
     'db_path' => "{$appRoot}/data/dani.sqlite3",
     'log_dir' => "{$appRoot}/logs",
