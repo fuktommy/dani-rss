@@ -44,7 +44,7 @@ class CachingClient
     {
         $log = $this->resource->getLog('CachingClient');
 
-        $cache = new Cache($this->resource);
+        $cache = new Cache($this->resource->getDb());
         $cache->setUp();
 
         $data = $cache->get($url);

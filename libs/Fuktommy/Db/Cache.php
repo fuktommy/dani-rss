@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2012,2020 Satoshi Fukutomi <info@fuktommy.com>.
+ * Copyright (c) 2020 Satoshi Fukutomi <info@fuktommy.com>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,12 +37,11 @@ class Cache
 
     /**
      * Constructor.
-     * @param \Fuktommy\WebIo\Resource $resource
      * @throws PDOException
      */
-    public function __construct(\Fuktommy\WebIo\Resource $resource)
+    public function __construct(\PDO $db)
     {
-        $this->db = $resource->getDb();
+        $this->db = $db;
     }
 
     /**
@@ -55,13 +54,13 @@ class Cache
         $this->db->beginTransaction();
         $migration = new Migration($this->db);
         $migration->execute(
-            "CREATE TABLE IF NOT EXISTS `cache`"
+            "CREATE TABLE `cache`"
             . " (`id` CHAR PRIMARY KEY NOT NULL,"
             . "  `value` TEXT NOT NULL,"
             . "  `expired` INTEGER NOT NULL)"
         );
         $migration->execute(
-            "CREATE INDEX `expired` ON `cache` (`expired`)"
+            "CREATE INDEX `cache_expired` ON `cache` (`expired`)"
         );
     }
 

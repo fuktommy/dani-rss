@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2012,2020 Satoshi Fukutomi <info@fuktommy.com>.
+ * Copyright (c) 2020 Satoshi Fukutomi <info@fuktommy.com>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,12 +32,12 @@ class Series
     /**
      * @var string
      */
-    public $url;
+    public $title;
 
     /**
      * @var string
      */
-    public $title;
+    public $url;
 
     /**
      * @var string
@@ -51,9 +51,9 @@ class Series
 
     public function __construct(array $record)
     {
-        $this->url = $record['url'];
         $this->title = $record['title'];
+        $this->url = $record['url'];
         $this->date = $record['date'];
-        $this->atomId = preg_replace('|^https?://|', '', $this->url);
+        $this->atomId = rawurlencode($this->title);
     }
 }

@@ -28,6 +28,7 @@
 namespace Fuktommy\DaniRss\Model;
 use Fuktommy\DaniRss\Entity\Series;
 use Fuktommy\Db\Migration;
+use Fuktommy\WebIo\Resource;
 
 class SeriesList
 {
@@ -41,7 +42,7 @@ class SeriesList
      * @param \Fuktommy\WebIo\Resource $resource
      * @throws PDOException
      */
-    public function __construct(\Fuktommy\WebIo\Resource $resource)
+    public function __construct(Resource $resource)
     {
         $this->db = $resource->getDb();
     }
@@ -56,13 +57,16 @@ class SeriesList
         $this->db->beginTransaction();
         $migration = new Migration($this->db);
         $migration->execute(
-            "CREATE TABLE IF NOT EXISTS `serieslist`"
-            . " (`url` CHAR PRIMARY KEY NOT NULL,"
-            . "  `title` CHAR NOT NULL,"
+            "CREATE TABLE `series`"
+            . " (`title` CHAR PRIMARY KEY NOT NULL,"
+            . "  `url` CHAR NOT NULL,"
             . "  `date` CHAR NOT NULL)"
         );
         $migration->execute(
-            "CREATE INDEX `date` ON `serieslist` (`date`)"
+            "CREATE UNIQUE INDEX `series_url` ON `series` (`url`)"
+        );
+        $migration->execute(
+            "CREATE INDEX `series_date` ON `series` (`date`)"
         );
     }
 
@@ -75,7 +79,7 @@ class SeriesList
     public function getRecent($size)
     {
         $state = $this->db->prepare(
-            "SELECT `url`, `title`, `date` FROM `serieslist`"
+            "SELECT `title`, `url`, `date` FROM `series`"
             . " ORDER BY `date` DESC"
             . " LIMIT :size"
         );
@@ -84,7 +88,7 @@ class SeriesList
                          $state->fetchAll(\PDO::FETCH_ASSOC));
     }
 
-    private function _timeFormat($unixtime)
+    private function timeFormat($unixtime)
     {
         return gmstrftime('%FT%TZ', $unixtime);
     }
@@ -96,30 +100,42 @@ class SeriesList
      */
     public function append($serieses)
     {
-        $date = $this->_timeFormat(time());
+        $date = $this->timeFormat(time());
 
         $state = $this->db->prepare(
-            "INSERT OR IGNORE INTO `serieslist`"
-            . " (`url`, `title`, `date`)"
-            . " VALUES (:url, :title, :date)"
-        );
-        foreach ($serieses as $seriese) {
-            $state->execute([
-                'url' => $seriese->url,
-                'title' => $seriese->title,
-                'date' => $date,
-            ]);
-        }
-
-        $state = $this->db->prepare(
-            "UPDATE `serieslist`"
+            "UPDATE `series`"
             . " SET `title` = :title"
             . " WHERE `url` = :url"
         );
         foreach ($serieses as $seriese) {
             $state->execute([
-                'url' => $seriese->url,
                 'title' => $seriese->title,
+                'url' => $seriese->url,
+            ]);
+        }
+
+        $state = $this->db->prepare(
+            "UPDATE `series`"
+            . " SET `url` = :url"
+            . " WHERE `title` = :title"
+        );
+        foreach ($serieses as $seriese) {
+            $state->execute([
+                'title' => $seriese->title,
+                'url' => $seriese->url,
+            ]);
+        }
+
+        $state = $this->db->prepare(
+            "INSERT OR IGNORE INTO `series`"
+            . " (`title`, `url`, `date`)"
+            . " VALUES (:title, :url, :date)"
+        );
+        foreach ($serieses as $seriese) {
+            $state->execute([
+                'title' => $seriese->title,
+                'url' => $seriese->url,
+                'date' => $date,
             ]);
         }
     }
