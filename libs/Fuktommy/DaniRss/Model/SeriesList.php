@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2012,2020 Satoshi Fukutomi <info@fuktommy.com>.
+ * Copyright (c) 2020 Satoshi Fukutomi <info@fuktommy.com>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -102,18 +102,22 @@ class SeriesList
     {
         $date = $this->timeFormat(time());
 
+        // for corrected titles
         $state = $this->db->prepare(
             "UPDATE `series`"
-            . " SET `title` = :title"
-            . " WHERE `url` = :url"
+            . " SET `title` = :title, `date` = :date"
+            . " WHERE `url` = :url AND `title` <> :title"
         );
         foreach ($serieses as $seriese) {
             $state->execute([
                 'title' => $seriese->title,
                 'url' => $seriese->url,
+                'date' => $date,
             ]);
         }
 
+        // for updated urls
+        // do not update date. it is weekly operation.
         $state = $this->db->prepare(
             "UPDATE `series`"
             . " SET `url` = :url"
@@ -126,6 +130,7 @@ class SeriesList
             ]);
         }
 
+        // for newarrival contents
         $state = $this->db->prepare(
             "INSERT OR IGNORE INTO `series`"
             . " (`title`, `url`, `date`)"
