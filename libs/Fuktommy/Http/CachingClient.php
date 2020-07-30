@@ -58,7 +58,12 @@ class CachingClient
             $cache->set($url, $data, $cacheTime);
         }
 
-        $cache->expire();
+        try {
+            $cache->expire();
+        } catch (\Exception $e) {
+            $log->warning('failed to expire: ' . $e->getMessage());
+        }
+
         $cache->commit();
 
         return $data;
