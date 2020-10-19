@@ -61,7 +61,7 @@ class Resource
     {
         $db = new \PDO('sqlite:' . $this->config['db_path']);
         $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        $db->setAttribute(\PDO::ATTR_TIMEOUT, 1.0);
+        $db->setAttribute(\PDO::ATTR_TIMEOUT, 2.0);
         return $db;
     }
 
