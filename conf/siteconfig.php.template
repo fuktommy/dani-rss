@@ -11,8 +11,9 @@ ini_set('user_agent', 'https://github.com/fuktommy/dani-rss');
 // configration
 return [
     'site_top' => 'https://dani.fuktommy.com',
+    'series_list_page' => 'https://site.nicovideo.jp/danime/all_contents_1201.html',
 
-    'series_list_url' => 'https://site.nicovideo.jp/danime/all_contents_1201.html',
+    'series_list_url' => 'https://site.nicovideo.jp/danime/static/data/list.json',
     'cache_time' => 300,
     'feed_size' => 100,
 

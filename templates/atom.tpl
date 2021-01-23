@@ -3,7 +3,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>dアニメストアニコニコ支店のシリーズ一覧</title>
   <link rel="self" href="{$config.site_top}" />
-  <link rel="alternate" href="{$config.series_list_url}" type="text/html"/>
+  <link rel="alternate" href="{$config.series_list_page}" type="text/html"/>
   <updated>{if $serieses}{$serieses[0]->date|atom_date_format}{else}{$smarty.now|atom_date_format}{/if}</updated>
   <generator>https://github.com/fuktommy/dani-rss</generator>
   <id>tag:fuktommy.com,2020:dani.rss</id>

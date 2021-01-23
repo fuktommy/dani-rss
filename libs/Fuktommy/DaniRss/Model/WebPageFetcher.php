@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2012,2020 Satoshi Fukutomi <info@fuktommy.com>.
+ * Copyright (c) 2012-2021 Satoshi Fukutomi <info@fuktommy.com>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,18 +51,16 @@ class WebPageFetcher
         $feedSize = $this->resource->config['feed_size'];
 
         $client = new CachingClient($this->resource);
-        $html = $client->fetch($url, $cacheTime);
+        $json = $client->fetch($url, $cacheTime);
+        $list = json_decode($json, true);
 
         $serieses = [];
-        $lines = explode("\n", $html);
-        foreach ($lines as $line) {
-            if (preg_match('/\A<a href="([^"]+)">([^<]+)<\/a>\r*\z/', $line, $matches)) {
-                $serieses[] = new Series([
-                    'url' => preg_replace('|^http://|', 'https://', htmlspecialchars_decode($matches[1])),
-                    'title' => htmlspecialchars_decode($matches[2]),
-                    'date' => '',
-                ]);
-            }
+        foreach ($list as $item) {
+            $serieses[] = new Series([
+                'url' => preg_replace('|^http://|', 'https://', $item['url']),
+                'title' => $item['title'],
+                'date' => '',
+            ]);
         }
 
         $seriesList = new SeriesList($this->resource);
