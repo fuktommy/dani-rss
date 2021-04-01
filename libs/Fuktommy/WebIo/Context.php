@@ -1,7 +1,7 @@
 <?php
 /* Web IO.
  *
- * Copyright (c) 2010-2020 Satoshi Fukutomi <info@fuktommy.com>.
+ * Copyright (c) 2010-2021 Satoshi Fukutomi <info@fuktommy.com>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -178,15 +178,16 @@ class Context
     }
 
     /**
-     * Factory for Log
+     * Factory for LoggerInterface
      * @param string $ident
-     * @return Log
+     * @return Psr\Log\LoggerInterface
      */
-    public function getLog($ident = '')
+    public function getLog()
     {
-        require_once 'Log.php';
-        $logfile = $this->config['log_dir'] . strftime('/debug.%Y%m%d.log');
-        return \Log::singleton('file', $logfile, $ident);
+        require_once 'Katzgrau/KLogger/autoload.php';
+        return new \Katzgrau\KLogger\Logger($this->config['log_dir'], \Psr\Log\LogLevel::DEBUG, [
+            'filename' => strftime('/debug.%Y%m%d.log'),
+        ]);
     }
 
     /**
