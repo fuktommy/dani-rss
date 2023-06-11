@@ -1,7 +1,7 @@
 <?php
 /* Web IO.
  *
- * Copyright (c) 2010-2021 Satoshi Fukutomi <info@fuktommy.com>.
+ * Copyright (c) 2010-2023 Satoshi Fukutomi <info@fuktommy.com>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -184,10 +184,11 @@ class Context
      */
     public function getLog()
     {
-        require_once 'Katzgrau/KLogger/autoload.php';
-        return new \Katzgrau\KLogger\Logger($this->config['log_dir'], \Psr\Log\LogLevel::DEBUG, [
-            'filename' => strftime('/debug.%Y%m%d.log'),
-        ]);
+        require_once 'Monolog/autoload.php';
+        $log = new \Monolog\Logger('log');
+        $log->pushHandler(new \Monolog\Handler\StreamHandler(
+            $this->config['log_dir'] . strftime('/debug.%Y%m%d.log'), \Monolog\Logger::DEBUG));
+        return $log;
     }
 
     /**
